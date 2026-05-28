@@ -1,0 +1,56 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node dependencies
+node_modules/
+prism-app/node_modules/
+
+# Frontend builds
+dist/
+dist-ssr/
+prism-app/dist/
+prism-app/dist-ssr/
+*.local
+
+# Amplify Gen 2 dynamic files
+.amplify/
+prism-app/.amplify/
+amplify_outputs*
+amplifyconfiguration*
+prism-app/amplify_outputs*
+prism-app/amplifyconfiguration*
+
+# SAM Backend builds and cache
+.aws-sam/
+prism-app/services/**/.aws-sam/
+prism-app/services/**/.pytest_cache/
+.pytest_cache/
+__pycache__/
+*.pyc
+prism-app/services/**/__pycache__/
+prism-app/services/**/*.pyc
+
+# Virtual environments
+.venv/
+venv/
+env/
+prism-app/services/**/*.venv
+prism-app/services/**/venv/
+prism-app/services/**/env/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
