@@ -23,13 +23,15 @@ function App() {
       const { data: newItem, errors } = await client.models.SourceItem.create({
         url: 'https://example.com/article',
         title: 'Initial Discovery Link',
-        status: 'PENDING'
+        status: 'DISCOVERED'
       });
       if (errors) {
         console.error('Errors creating SourceItem:', errors);
-      } else {
+      } else if (newItem) {
         console.log('SourceItem created successfully:', newItem);
         alert(`Successfully created SourceItem: ${newItem.title}`);
+      } else {
+        console.error('SourceItem creation returned null.');
       }
     } catch (err) {
       console.error(err);

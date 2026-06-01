@@ -7,25 +7,54 @@ specifies that any unauthenticated user can "create", "read", "update",
 and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
+  SourceDefinition: a.model({
+    name: a.string().required(),
+    sourceType: a.enum(['INVESTOR_RELATIONS', 'PRESS_RELEASE', 'NEWS_SITE', 'REGULATOR', 'RSS', 'MANUAL']),
+    url: a.string().required(),
+    pollingConfig: a.string(),
+    active: a.boolean(),
+    domainConfig: a.string(),
+    defaultScoringHints: a.string(),
+    tags: a.string().array(),
+  }).authorization(allow => [allow.authenticated()]),
+
   SourceItem: a.model({
+    sourceDefinitionId: a.id(),
     url: a.string().required(),
     title: a.string(),
+    publicationDate: a.datetime(),
     content: a.string(),
-    status: a.enum(['PENDING', 'INGESTED', 'FAILED']),
+    rawAIOutput: a.string(),
+    aiAssessmentMetadata: a.string(),
+    status: a.enum(['DISCOVERED', 'ASSESSED', 'REVIEWED', 'REJECTED', 'PUBLISHED', 'DUPLICATE', 'FAILED']),
+    reviewer: a.string(),
+    reviewTimestamp: a.datetime(),
+    duplicateReferences: a.string().array(),
   }).authorization(allow => [allow.authenticated()]),
 
   KnowledgeItem: a.model({
-    sourceItemId: a.id().required(),
+    sourceItemId: a.id(),
     title: a.string().required(),
     summary: a.string(),
-    significanceScore: a.integer(),
+    markdownBody: a.string(),
+    whyItMatters: a.string(),
+    keyFacts: a.string().array(),
     reliabilityScore: a.integer(),
+    significanceScore: a.integer(),
+    topics: a.string().array(),
+    status: a.enum(['DRAFT', 'IN_REVIEW', 'PUBLISHED']),
+    createdBy: a.string(),
+    updatedBy: a.string(),
   }).authorization(allow => [allow.authenticated()]),
 
   Entity: a.model({
     name: a.string().required(),
-    type: a.enum(['OPERATOR', 'BRAND', 'REGULATOR', 'PERSON', 'ORGANIZATION']),
+    slug: a.string(),
+    type: a.enum(['OPERATOR', 'STUDIO', 'BRAND', 'AGGREGATOR', 'REGULATOR', 'JURISDICTION', 'STRATEGIC_TOPIC', 'PERSON', 'ORGANIZATION']),
     description: a.string(),
+    aliases: a.string().array(),
+    metadata: a.string(),
+    active: a.boolean(),
   }).authorization(allow => [allow.authenticated()]),
 
   Relationship: a.model({
@@ -33,6 +62,28 @@ const schema = a.schema({
     targetEntityId: a.id().required(),
     relationshipType: a.string().required(),
     description: a.string(),
+    confidence: a.integer(),
+    supportingKnowledgeItems: a.string().array(),
+    createdBy: a.string(),
+  }).authorization(allow => [allow.authenticated()]),
+
+  ExportProfile: a.model({
+    name: a.string().required(),
+    description: a.string(),
+    filters: a.string(),
+    groupingRules: a.string(),
+    outputFormat: a.enum(['SINGLE_MARKDOWN', 'MULTIPLE_MARKDOWN', 'THEMATIC_ZIP']),
+    fileSplittingRules: a.string(),
+    destinationConfig: a.string(),
+  }).authorization(allow => [allow.authenticated()]),
+
+  ExportJob: a.model({
+    exportProfileId: a.id().required(),
+    triggeredBy: a.string(),
+    generatedAt: a.datetime(),
+    status: a.enum(['PENDING', 'RUNNING', 'COMPLETED', 'FAILED']),
+    outputLocation: a.string(),
+    errorInformation: a.string(),
   }).authorization(allow => [allow.authenticated()]),
 
   // These custom mutations require custom Lambda handlers. 
