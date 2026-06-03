@@ -1,40 +1,45 @@
+import { useState } from 'react';
 import { Authenticator } from '@aws-amplify/ui-react';
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '../amplify/data/resource';
-import { ThemeProvider, createTheme, CssBaseline, Box, Typography, Button, Paper } from '@mui/material';
-
-const client = generateClient<Schema>();
+import { ThemeProvider, createTheme, CssBaseline, Box } from '@mui/material';
+import Sidebar from './components/Sidebar';
+import ReviewQueue from './views/ReviewQueue';
+import KnowledgeBase from './views/KnowledgeBase';
+import EntityGraph from './views/EntityGraph';
+import ContextDocs from './views/ContextDocs';
+import SourcesAdmin from './views/SourcesAdmin';
+import ExportManager from './views/ExportManager';
 
 const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: { main: '#90caf9' },
     secondary: { main: '#f48fb1' },
-    background: { default: '#121212', paper: '#1e1e1e' }
+    background: { default: '#0b0b0f', paper: 'rgba(30, 30, 42, 0.35)' }
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: "'Outfit', 'Inter', sans-serif",
   }
 });
 
 function App() {
-  const handleTestApi = async () => {
-    try {
-      const { data: newItem, errors } = await client.models.SourceItem.create({
-        url: 'https://example.com/article',
-        title: 'Initial Discovery Link',
-        status: 'DISCOVERED'
-      });
-      if (errors) {
-        console.error('Errors creating SourceItem:', errors);
-      } else if (newItem) {
-        console.log('SourceItem created successfully:', newItem);
-        alert(`Successfully created SourceItem: ${newItem.title}`);
-      } else {
-        console.error('SourceItem creation returned null.');
-      }
-    } catch (err) {
-      console.error(err);
+  const [currentView, setCurrentView] = useState('triage');
+
+  const renderView = () => {
+    switch (currentView) {
+      case 'triage':
+        return <ReviewQueue />;
+      case 'browse':
+        return <KnowledgeBase />;
+      case 'graph':
+        return <EntityGraph />;
+      case 'context':
+        return <ContextDocs />;
+      case 'sources':
+        return <SourcesAdmin />;
+      case 'export':
+        return <ExportManager />;
+      default:
+        return <ReviewQueue />;
     }
   };
 
@@ -43,24 +48,18 @@ function App() {
       <CssBaseline />
       <Authenticator hideSignUp>
         {({ signOut, user }) => (
-          <Box sx={{ minHeight: '100vh', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Paper elevation={3} sx={{ p: 4, maxWidth: 800, width: '100%' }}>
-              <Typography variant="h3" gutterBottom color="primary">
-                PRISM Operations
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 4 }} color="text.secondary">
-                Authenticated as: {user?.signInDetails?.loginId}
-              </Typography>
-              
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <Button variant="contained" onClick={handleTestApi}>
-                  Test SAM Ingestion Mutation
-                </Button>
-                <Button variant="outlined" color="error" onClick={signOut}>
-                  Sign Out
-                </Button>
+          <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
+            <Sidebar
+              currentView={currentView}
+              onViewChange={setCurrentView}
+              userEmail={user?.signInDetails?.loginId}
+              onSignOut={signOut || (() => {})}
+            />
+            <Box sx={{ flexGrow: 1, pl: '260px', width: 'calc(100% - 260px)' }}>
+              <Box sx={{ p: 4 }}>
+                {renderView()}
               </Box>
-            </Paper>
+            </Box>
           </Box>
         )}
       </Authenticator>

@@ -86,6 +86,16 @@ const schema = a.schema({
     errorInformation: a.string(),
   }).authorization(allow => [allow.authenticated()]),
 
+  ContextDocument: a.model({
+    title: a.string().required(),
+    description: a.string(),
+    content: a.string(),          // Markdown body
+    topics: a.string().array(),   // Custom categorization tags
+    entityIds: a.string().array(),// Linked corporate entities from Entity model
+    createdBy: a.string(),
+    updatedBy: a.string(),
+  }).authorization(allow => [allow.authenticated()]),
+
   // These custom mutations require custom Lambda handlers. 
   // We will uncomment them once we configure the SAM Lambda integrations in amplify/backend.ts!
   // triggerIngestion: a.mutation()
