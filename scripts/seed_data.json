@@ -1,0 +1,157 @@
+{
+  "sourceDefinitions": [
+    {
+      "name": "iGaming Business News",
+      "sourceType": "RSS",
+      "url": "https://igamingbusiness.com/feed/",
+      "active": true,
+      "pollingConfig": "rate(1 hour)",
+      "domainConfig": "{}",
+      "defaultScoringHints": "{\"reliabilityScore\": 4}",
+      "tags": ["news", "industry"]
+    },
+    {
+      "name": "SBC News",
+      "sourceType": "RSS",
+      "url": "https://sbcnews.co.uk/feed/",
+      "active": true,
+      "pollingConfig": "rate(1 hour)",
+      "domainConfig": "{}",
+      "defaultScoringHints": "{\"reliabilityScore\": 4}",
+      "tags": ["news", "sports"]
+    },
+    {
+      "name": "EGR Global",
+      "sourceType": "RSS",
+      "url": "https://egr.global/feed/",
+      "active": true,
+      "pollingConfig": "rate(1 hour)",
+      "domainConfig": "{}",
+      "defaultScoringHints": "{\"reliabilityScore\": 4}",
+      "tags": ["news", "b2b"]
+    },
+    {
+      "name": "Yahoo Finance Flutter",
+      "sourceType": "RSS",
+      "url": "https://finance.yahoo.com/rss/headline?s=FLTR.L",
+      "active": true,
+      "pollingConfig": "rate(1 hour)",
+      "domainConfig": "{}",
+      "defaultScoringHints": "{\"reliabilityScore\": 5}",
+      "tags": ["financial", "flutter"]
+    }
+  ],
+  "entities": [
+    {
+      "name": "Flutter Entertainment",
+      "slug": "flutter-entertainment",
+      "type": "OPERATOR",
+      "description": "Global sports betting and gaming operator",
+      "aliases": ["Flutter", "Paddy Power Betfair"],
+      "metadata": "{}",
+      "active": true
+    },
+    {
+      "name": "FanDuel",
+      "slug": "fanduel",
+      "type": "BRAND",
+      "description": "Leading US sports betting and online casino brand",
+      "aliases": ["FanDuel Sportsbook", "FanDuel Casino"],
+      "metadata": "{}",
+      "active": true
+    },
+    {
+      "name": "Entain",
+      "slug": "entain",
+      "type": "OPERATOR",
+      "description": "Multinational sports betting and gaming group",
+      "aliases": ["GVC Holdings"],
+      "metadata": "{}",
+      "active": true
+    },
+    {
+      "name": "Ladbrokes",
+      "slug": "ladbrokes",
+      "type": "BRAND",
+      "description": "Major UK betting brand owned by Entain",
+      "aliases": ["Ladbrokes Coral"],
+      "metadata": "{}",
+      "active": true
+    },
+    {
+      "name": "MGM Resorts",
+      "slug": "mgm-resorts",
+      "type": "OPERATOR",
+      "description": "Global hospitality and casino entertainment company",
+      "aliases": ["MGM Resorts International", "MGM"],
+      "metadata": "{}",
+      "active": true
+    },
+    {
+      "name": "BetMGM",
+      "slug": "betmgm",
+      "type": "BRAND",
+      "description": "US joint venture online sports betting and gaming brand",
+      "aliases": ["BetMGM Casino", "BetMGM Sportsbook"],
+      "metadata": "{}",
+      "active": true
+    },
+    {
+      "name": "Borgata Online",
+      "slug": "borgata-online",
+      "type": "BRAND",
+      "description": "US online gaming brand sister to BetMGM",
+      "aliases": ["Borgata"],
+      "metadata": "{}",
+      "active": true
+    },
+    {
+      "name": "DraftKings",
+      "slug": "draftkings",
+      "type": "OPERATOR",
+      "description": "US digital sports entertainment and gaming company",
+      "aliases": ["DK"],
+      "metadata": "{}",
+      "active": true
+    },
+    {
+      "name": "Golden Nugget Online Gaming",
+      "slug": "golden-nugget-online-gaming",
+      "type": "BRAND",
+      "description": "Online casino brand acquired by DraftKings",
+      "aliases": ["Golden Nugget Online", "GNOG"],
+      "metadata": "{}",
+      "active": true
+    }
+  ],
+  "relationships": [
+    {
+      "source": "Flutter Entertainment",
+      "target": "FanDuel",
+      "type": "owns",
+      "confidence": 5,
+      "description": "Flutter Entertainment owns and operates the FanDuel brand in North America."
+    },
+    {
+      "source": "Entain",
+      "target": "Ladbrokes",
+      "type": "owns",
+      "confidence": 5,
+      "description": "Entain owns and operates the Ladbrokes betting brand."
+    },
+    {
+      "source": "BetMGM",
+      "target": "Borgata Online",
+      "type": "sister_brand",
+      "confidence": 5,
+      "description": "Borgata Online operates as a sister brand to BetMGM in legal US state markets."
+    },
+    {
+      "source": "DraftKings",
+      "target": "Golden Nugget Online Gaming",
+      "type": "acquired",
+      "confidence": 5,
+      "description": "DraftKings completed the acquisition of Golden Nugget Online Gaming in 2022."
+    }
+  ]
+}
