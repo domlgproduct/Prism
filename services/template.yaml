@@ -60,7 +60,15 @@ Resources:
                 - ssm:GetParameter
                 - ssm:GetParameters
                 - ssm:GetParametersByPath
-              Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/amplify/prism/${Environment}/*'
+              Resource:
+                - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/amplify/prism/${Environment}/*'
+                - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/amplify/*'
+            # Grants read access to list AppSync APIs & list DynamoDB tables to resolve dynamic table suffixes
+            - Effect: Allow
+              Action:
+                - appsync:ListGraphqlApis
+                - dynamodb:ListTables
+              Resource: '*'
             # Grants read/write access to all DynamoDB tables in the region to support sandbox deployments
             - Effect: Allow
               Action:
@@ -104,7 +112,15 @@ Resources:
                 - ssm:GetParameter
                 - ssm:GetParameters
                 - ssm:GetParametersByPath
-              Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/amplify/prism/${Environment}/*'
+              Resource:
+                - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/amplify/prism/${Environment}/*'
+                - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/amplify/*'
+            # Grants read access to list AppSync APIs & list DynamoDB tables to resolve dynamic table suffixes
+            - Effect: Allow
+              Action:
+                - appsync:ListGraphqlApis
+                - dynamodb:ListTables
+              Resource: '*'
             # DynamoDB read/write permission
             - Effect: Allow
               Action:
