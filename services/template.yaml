@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   PRISM Async Backend Services - AWS SAM Application.
-  Coordinates heavy async background jobs including source scans, Bedrock AI extraction, and Markdown exports.
+  Coordinates some heavy async background jobs including source scans, Bedrock AI extraction, and Markdown exports.
 
 Parameters:
   Environment:
