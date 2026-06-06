@@ -194,6 +194,7 @@ export default function ContextDocs() {
 title: [Title of the briefing note]
 description: [Short summary of the briefing]
 topics: [comma, separated, topics]
+entities: [Type:Name, Type:Name, e.g. Operator:Flutter, Regulator:UKGC, Brand:FanDuel]
 ---
 
 # [Title of the briefing note]
@@ -224,13 +225,14 @@ topics: [comma, separated, topics]
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const text = e.target?.result as string;
       if (!text) return;
 
       let titleVal = '';
       let descVal = '';
       let topicsVal = '';
+      let entitiesVal = '';
       let contentVal = text;
 
       if (text.startsWith('---')) {
@@ -251,6 +253,8 @@ topics: [comma, separated, topics]
                 descVal = value;
               } else if (key === 'topics') {
                 topicsVal = value;
+              } else if (key === 'entities') {
+                entitiesVal = value;
               }
             }
           });
@@ -261,6 +265,53 @@ topics: [comma, separated, topics]
       if (descVal) setFormDescription(descVal);
       if (topicsVal) setFormTopics(topicsVal);
       setFormContent(contentVal);
+
+      // Resolve and dynamically auto-create entities if defined in frontmatter
+      if (entitiesVal) {
+        const parsedEntities = entitiesVal.split(',').map(e => e.trim()).filter(e => e !== '');
+        const newEntityIds = [...formEntityIds];
+
+        for (const entStr of parsedEntities) {
+          let type: any = 'OPERATOR';
+          let name = entStr;
+
+          if (entStr.includes(':')) {
+            const idx = entStr.indexOf(':');
+            const typePart = entStr.substring(0, idx).trim().toUpperCase();
+            const namePart = entStr.substring(idx + 1).trim();
+            const validTypes = ['OPERATOR', 'STUDIO', 'BRAND', 'AGGREGATOR', 'REGULATOR', 'JURISDICTION', 'STRATEGIC_TOPIC', 'PERSON', 'ORGANIZATION'];
+            if (validTypes.includes(typePart)) {
+              type = typePart;
+              name = namePart;
+            }
+          }
+
+          // Check if it already exists (case-insensitive name match)
+          const existing = entities.find(e => e.name.toLowerCase() === name.toLowerCase());
+          if (existing) {
+            if (!newEntityIds.includes(existing.id)) {
+              newEntityIds.push(existing.id);
+            }
+          } else {
+            try {
+              // Create the missing entity on the fly
+              const createRes = await client.models.Entity.create({
+                name: name,
+                type: type,
+                active: true,
+              });
+              if (createRes.data) {
+                // Inject the new entity into the state list options
+                setEntities(prev => [...prev, createRes.data]);
+                newEntityIds.push(createRes.data.id);
+              }
+            } catch (err) {
+              console.error('Error auto-creating entity from upload:', err);
+            }
+          }
+        }
+        setFormEntityIds(newEntityIds);
+      }
     };
     reader.readAsText(file);
   };
