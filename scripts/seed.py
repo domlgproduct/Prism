@@ -14,42 +14,59 @@ logger = logging.getLogger("DatabaseSeeder")
 
 def resolve_dynamodb_tables(env_name: str, app_name: str = "prism") -> dict:
     """
-    Dynamically lists all DynamoDB tables in the AWS account and resolves
-    the physical names matching the models for the PRISM app stack.
+    Dynamically resolves the physical DynamoDB table names matching the models
+    for the specified PRISM environment.
     """
-    logger.info("Dynamically listing DynamoDB tables to resolve physical names...")
+    logger.info(f"Resolving physical DynamoDB tables for environment: '{env_name}'...")
     resolved = {}
     model_keys = ["SourceDefinition", "SourceItem", "KnowledgeItem", "Entity", "Relationship"]
     
+    # 1. Try to match AppSync API by environment branch tag
     try:
-        ddb_client = boto3.client("dynamodb")
-        paginator = ddb_client.get_paginator("list_tables")
-        pages = paginator.paginate()
-        
-        all_tables = []
-        for page in pages:
-            all_tables.extend(page.get("TableNames", []))
-            
-        # Locate the unique suffix for our tables (e.g., pjobpc2nkvdv3dnnpjoyeoeate-NONE)
-        # We find this by checking the suffix of any table starting with 'SourceItem-'
-        suffix = None
-        for table in all_tables:
-            if table.startswith("SourceItem-"):
-                # Suffix is everything after "SourceItem-"
-                suffix = table[len("SourceItem-"):]
-                logger.info(f"Detected PRISM table stack suffix: {suffix}")
+        appsync = boto3.client("appsync")
+        apis = appsync.list_graphql_apis().get("graphqlApis", [])
+        api_id = None
+        for api in apis:
+            tags = api.get("tags", {})
+            if tags.get("amplify:branch-name") == env_name and api.get("name") == "amplifyData":
+                api_id = api.get("apiId")
+                logger.info(f"Matched AppSync API {api_id} for branch environment '{env_name}'")
                 break
-                
-        if suffix:
+        if api_id:
             for model in model_keys:
-                resolved[f"{model}Table"] = f"{model}-{suffix}"
+                resolved[f"{model}Table"] = f"{model}-{api_id}-NONE"
                 logger.info(f"Resolved table for {model}: {resolved[f'{model}Table']}")
-        else:
-            logger.warning("Could not find any tables starting with 'SourceItem-' in the DynamoDB list.")
-            
     except Exception as e:
-        logger.error(f"Error during dynamic table name resolution: {str(e)}")
-        
+        logger.warning(f"Could not resolve tables via AppSync tags: {str(e)}")
+
+    # 2. Fallback: list tables dynamically and pick the first matching suffix (legacy)
+    if not resolved:
+        try:
+            ddb_client = boto3.client("dynamodb")
+            paginator = ddb_client.get_paginator("list_tables")
+            pages = paginator.paginate()
+            
+            all_tables = []
+            for page in pages:
+                all_tables.extend(page.get("TableNames", []))
+                
+            suffix = None
+            for table in all_tables:
+                if table.startswith("SourceItem-"):
+                    suffix = table[len("SourceItem-"):]
+                    logger.info(f"Detected fallback table stack suffix: {suffix}")
+                    break
+                    
+            if suffix:
+                for model in model_keys:
+                    resolved[f"{model}Table"] = f"{model}-{suffix}"
+                    logger.info(f"Resolved table for {model}: {resolved[f'{model}Table']}")
+            else:
+                logger.warning("Could not find any tables starting with 'SourceItem-' in the DynamoDB list.")
+                
+        except Exception as e:
+            logger.error(f"Error during dynamic table name resolution: {str(e)}")
+            
     return resolved
 
 def purge_table_items(db, table_name: str):
