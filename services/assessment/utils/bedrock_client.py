@@ -11,7 +11,7 @@ class BedrockClient:
         """
         Initialize the Bedrock client.
         """
-        self.model_id = model_id or os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-3-haiku-20240307")
+        self.model_id = model_id or os.environ.get("BEDROCK_MODEL_ID", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
         self.client = boto3.client("bedrock-runtime")
         logger.info(f"Initialized BedrockClient for model: {self.model_id}")
 
