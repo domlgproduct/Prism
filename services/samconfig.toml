@@ -4,10 +4,9 @@ version = 0.1
 stack_name = "prism-services-prod"
 resolve_s3 = true
 s3_prefix = "prism-services-prod"
-region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "Environment=\"master\" AlertEmail=\"dom@productradars.com\" DailyAiLimit=\"150\" BedrockModelId=\"anthropic.claude-3-haiku-20240307\""
+parameter_overrides = "Environment=\"master\" AlertEmail=\"dom@productradars.com\" DailyAiLimit=\"150\" BedrockModelId=\"anthropic.claude-3-haiku-20240307-v1:0\""
 image_repositories = []
 
 [default.global.parameters]
