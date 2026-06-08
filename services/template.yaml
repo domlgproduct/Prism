@@ -139,6 +139,12 @@ Resources:
               Resource: 
                 - !Sub 'arn:aws:bedrock:*::foundation-model/*'
                 - !Sub 'arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/*'
+            # AWS Marketplace Subscription permissions required by Bedrock for 3rd party models
+            - Effect: Allow
+              Action:
+                - aws-marketplace:ViewSubscriptions
+                - aws-marketplace:Subscribe
+              Resource: '*'
             # SNS Alert Publishing permission
             - Effect: Allow
               Action:
