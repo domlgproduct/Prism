@@ -19,7 +19,7 @@ Parameters:
     Description: Daily cap on Bedrock AI assessments to prevent runaway model expenses.
   BedrockModelId:
     Type: String
-    Default: anthropic.claude-3-haiku-20240307
+    Default: anthropic.claude-3-haiku-20240307-v1:0
     Description: Amazon Bedrock Foundation Model ID to use for routine article summaries and metadata suggestion.
 
 Globals:
