@@ -137,7 +137,7 @@ Resources:
               Action:
                 - bedrock:InvokeModel
               Resource: 
-                - !Sub 'arn:aws:bedrock:${AWS::Region}::foundation-model/*'
+                - !Sub 'arn:aws:bedrock:*::foundation-model/*'
                 - !Sub 'arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/*'
             # SNS Alert Publishing permission
             - Effect: Allow
