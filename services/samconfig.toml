@@ -6,7 +6,7 @@ resolve_s3 = true
 s3_prefix = "prism-services-prod"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "Environment=\"master\" AlertEmail=\"dom@productradars.com\" DailyAiLimit=\"150\" BedrockModelId=\"us.anthropic.claude-haiku-4-5-20251001-v1:0\""
+parameter_overrides = "Environment=\"master\" AlertEmail=\"dom@productradars.com\" DailyAiLimit=\"150\" "
 image_repositories = []
 
 [default.global.parameters]
