@@ -17,8 +17,8 @@ You must return a JSON object matching this schema exactly.
   "suggestedPrimaryEntity": "The main company or entity involved",
   "suggestedRelatedEntities": ["Entity 2"],
   "suggestedRelationships": [{"source": "Entity 1", "target": "Entity 2", "type": "acquired"}],
-  "reliabilityScore": 4, // 1 to 5 scale
-  "significanceScore": 3, // 1 to 5 scale
+  "reliabilityScore": 4,
+  "significanceScore": 3,
   "markdownDraft": "A neutral, markdown-formatted version of the intelligence"
 }
 
