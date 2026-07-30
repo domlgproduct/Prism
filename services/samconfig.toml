@@ -11,6 +11,7 @@ s3_prefix = "prism-services-dev"
 confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = "Environment=\"dev\" AlertEmail=\"dom@productradars.com\" DailyAiLimit=\"150\" "
+tags = "Project=\"Prism\" Environment=\"dev\""
 image_repositories = []
 
 # Explicit Development environment configuration
@@ -21,6 +22,7 @@ s3_prefix = "prism-services-dev"
 confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = "Environment=\"dev\" AlertEmail=\"dom@productradars.com\" DailyAiLimit=\"150\" "
+tags = "Project=\"Prism\" Environment=\"dev\""
 image_repositories = []
 
 # Production environment configuration
@@ -31,4 +33,5 @@ s3_prefix = "prism-services-prod"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = "Environment=\"master\" AlertEmail=\"dom@productradars.com\" DailyAiLimit=\"150\" "
+tags = "Project=\"Prism\" Environment=\"prod\""
 image_repositories = []

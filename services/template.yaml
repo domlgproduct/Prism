@@ -29,6 +29,9 @@ Globals:
     Runtime: python3.12
     LoggingConfig:
       LogFormat: JSON
+    Tags:
+      Project: Prism
+      Environment: !Ref Environment
 
 Resources:
   # Simple Notification Service Topic for Billing & Ingestion alerts

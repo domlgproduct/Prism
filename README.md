@@ -38,10 +38,18 @@ This repository uses a monorepo-style structure (`prism-app` primary repo):
 ## Environment & Naming Conventions
 
 PRISM maintains strict environment separation using explicit naming:
-- **Environments**: `prism-dev` and `prism-prod`
-- **Resource Naming Pattern**: `prism-{environment}-{resource}` (e.g. `prism-dev-knowledge-items`, `prism-prod-source-items`)
+- **Development (`dev`)**: 
+  - Domain: [https://prism-dev.productradars.com](https://prism-dev.productradars.com)
+  - Git Branch: `dev`
+  - SAM Backend Stack: `prism-services-dev`
+  - Cost Allocation Tag: `Environment=dev`
+- **Production (`prod`)**: 
+  - Domain: [https://prism.productradars.com](https://prism.productradars.com)
+  - Git Branch: `master`
+  - SAM Backend Stack: `prism-services-prod`
+  - Cost Allocation Tag: `Environment=prod`
 
-This ensures clear environment separation without the ambiguous stack naming experienced in earlier projects.
+This ensures clear environment separation across both frontend web hosting and backend serverless infrastructure.
 
 ## Project Setup
 
@@ -67,7 +75,7 @@ During local development, Amplify Gen 2 can provide a cloud sandbox environment 
 
 ### 2. Explicit Backend Services Setup (AWS SAM)
 
-The asynchronous background workers are managed via AWS SAM.
+The asynchronous background workers are managed via AWS SAM using pre-configured profiles in `samconfig.toml`.
 
 ```bash
 cd services
@@ -75,11 +83,14 @@ cd services
 # Build the SAM application
 sam build
 
-# Deploy to your AWS environment
-sam deploy --guided
+# Deploy to Development (prism-services-dev)
+sam deploy --config-env dev
+
+# Deploy to Production (prism-services-prod)
+sam deploy --config-env prod
 ```
 
-When deploying, you'll be prompted for parameters such as the Environment (e.g., `dev`), Alert Email, and Bedrock Model ID.
+`samconfig.toml` automatically handles environment parameter overrides (Alert Email, AI Limits, Bedrock Model ID) as well as cost allocation tags (`Project=Prism`, `Environment=dev|prod`).
 
 ## CI/CD Pipeline & AWS Amplify Integration
 
