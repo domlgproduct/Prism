@@ -14,9 +14,10 @@ interface SidebarProps {
   onViewChange: (view: string) => void;
   userEmail?: string;
   onSignOut: () => void;
+  onClose?: () => void;
 }
 
-export default function Sidebar({ currentView, onViewChange, userEmail, onSignOut }: SidebarProps) {
+export default function Sidebar({ currentView, onViewChange, userEmail, onSignOut, onClose }: SidebarProps) {
   const menuItems = [
     { id: 'triage', label: 'Triage Queue', icon: <TriageIcon /> },
     { id: 'browse', label: 'Knowledge Base', icon: <BrowseIcon /> },
@@ -42,16 +43,24 @@ export default function Sidebar({ currentView, onViewChange, userEmail, onSignOu
     }}>
       {/* Header Logo */}
       <Box sx={{ p: 3, display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h4" sx={{ 
-          fontFamily: "'Outfit', sans-serif", 
-          fontWeight: 700, 
-          background: 'linear-gradient(45deg, #90caf9 30%, #f48fb1 90%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          letterSpacing: '1px'
-        }}>
-          PRISM
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+          <Box 
+            component="img" 
+            src="/Icon-blue.png" 
+            alt="Prism Icon" 
+            sx={{ width: 44, height: 44, objectFit: 'contain' }} 
+          />
+          <Typography variant="h4" sx={{ 
+            fontFamily: "'Outfit', sans-serif", 
+            fontWeight: 700, 
+            background: 'linear-gradient(45deg, #90caf9 30%, #f48fb1 90%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            letterSpacing: '1px'
+          }}>
+            RISM
+          </Typography>
+        </Box>
         <Typography variant="caption" color="text.secondary" sx={{ letterSpacing: '2px', mt: 0.5 }}>
           INTELLIGENCE HUB
         </Typography>
@@ -67,7 +76,10 @@ export default function Sidebar({ currentView, onViewChange, userEmail, onSignOu
             return (
               <ListItemButton
                 key={item.id}
-                onClick={() => onViewChange(item.id)}
+                onClick={() => {
+                  onViewChange(item.id);
+                  if (onClose) onClose();
+                }}
                 sx={{
                   borderRadius: 2,
                   py: 1.5,

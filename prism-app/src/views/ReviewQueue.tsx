@@ -14,6 +14,7 @@ import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
 import GlassCard from '../components/GlassCard';
 import ScoreIndicator from '../components/ScoreIndicator';
+import { motion } from 'framer-motion';
 
 const client = generateClient<Schema>();
 
@@ -211,9 +212,23 @@ export default function ReviewQueue() {
         </Paper>
       ) : (
         /* Active Triage Card */
-        <Box sx={{ position: 'relative' }}>
-          <Box className={swipeState === 'reject' ? 'swipe-reject' : swipeState === 'accept' ? 'swipe-accept' : ''}>
-            <GlassCard sx={{ p: 4 }}>
+        <Box sx={{ position: 'relative', pb: { xs: 12, sm: 0 } }}>
+          <motion.div
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.7}
+            onDragEnd={(e, { offset }) => {
+              if (offset.x < -120) {
+                handleSwipe('reject');
+              } else if (offset.x > 120) {
+                handleSwipe('accept');
+              }
+            }}
+            whileTap={{ scale: 0.98 }}
+            className={swipeState === 'reject' ? 'swipe-reject' : swipeState === 'accept' ? 'swipe-accept' : ''}
+            style={{ touchAction: 'none' }}
+          >
+            <GlassCard sx={{ p: { xs: 3, sm: 4 }, cursor: 'grab' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                 <Typography variant="caption" color="text.secondary">
                   CANDIDATE DRAFT • {currentIndex + 1} OF {candidates.length}
@@ -251,10 +266,23 @@ export default function ReviewQueue() {
                 </Stack>
               )}
             </GlassCard>
-          </Box>
+          </motion.div>
 
           {/* Triage Action Buttons */}
-          <Stack direction="row" spacing={3} sx={{ mt: 4, justifyContent: 'center' }}>
+          <Stack 
+            direction="row" 
+            spacing={{ xs: 2, sm: 3 }} 
+            sx={{ 
+              mt: 4, 
+              justifyContent: 'center',
+              position: { xs: 'fixed', sm: 'relative' },
+              bottom: { xs: 24, sm: 'auto' },
+              left: { xs: 0, sm: 'auto' },
+              right: { xs: 0, sm: 'auto' },
+              px: { xs: 2, sm: 0 },
+              zIndex: 10
+            }}
+          >
             <Button
               variant="contained"
               color="error"
@@ -264,14 +292,15 @@ export default function ReviewQueue() {
               disabled={swipeState !== null}
               sx={{
                 borderRadius: 3,
-                px: 4,
+                px: { xs: 2, sm: 4 },
                 py: 1.5,
                 boxShadow: '0 4px 14px 0 rgba(244, 67, 54, 0.25)',
                 textTransform: 'none',
-                fontWeight: 600
+                fontWeight: 600,
+                flex: { xs: 1, sm: 'none' }
               }}
             >
-              Reject Candidate
+              Reject
             </Button>
             <Button
               variant="contained"
@@ -282,14 +311,15 @@ export default function ReviewQueue() {
               disabled={swipeState !== null}
               sx={{
                 borderRadius: 3,
-                px: 4,
+                px: { xs: 2, sm: 4 },
                 py: 1.5,
                 boxShadow: '0 4px 14px 0 rgba(76, 175, 80, 0.25)',
                 textTransform: 'none',
-                fontWeight: 600
+                fontWeight: 600,
+                flex: { xs: 1, sm: 'none' }
               }}
             >
-              Review & Accept
+              Accept
             </Button>
           </Stack>
         </Box>
