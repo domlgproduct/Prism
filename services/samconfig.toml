@@ -1,6 +1,30 @@
 version = 0.1
 
+[default.global.parameters]
+region = "us-east-1"
+
+# Default configuration targets development
 [default.deploy.parameters]
+stack_name = "prism-services-dev"
+resolve_s3 = true
+s3_prefix = "prism-services-dev"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=\"dev\" AlertEmail=\"dom@productradars.com\" DailyAiLimit=\"150\" "
+image_repositories = []
+
+# Explicit Development environment configuration
+[dev.deploy.parameters]
+stack_name = "prism-services-dev"
+resolve_s3 = true
+s3_prefix = "prism-services-dev"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=\"dev\" AlertEmail=\"dom@productradars.com\" DailyAiLimit=\"150\" "
+image_repositories = []
+
+# Production environment configuration
+[prod.deploy.parameters]
 stack_name = "prism-services-prod"
 resolve_s3 = true
 s3_prefix = "prism-services-prod"
@@ -8,6 +32,3 @@ confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = "Environment=\"master\" AlertEmail=\"dom@productradars.com\" DailyAiLimit=\"150\" "
 image_repositories = []
-
-[default.global.parameters]
-region = "us-east-1"
