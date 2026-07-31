@@ -217,7 +217,7 @@ export default function ReviewQueue() {
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.7}
-            onDragEnd={(e, { offset }) => {
+            onDragEnd={(_, { offset }) => {
               if (offset.x < -120) {
                 handleSwipe('reject');
               } else if (offset.x > 120) {
