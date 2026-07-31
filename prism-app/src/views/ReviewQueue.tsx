@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Button, Stack, Drawer, TextField, Slider, 
-  IconButton, Alert, CircularProgress, Chip, Paper
+  IconButton, Alert, CircularProgress, Chip, Paper, useTheme, useMediaQuery
 } from '@mui/material';
 import { 
   CheckCircle as ApproveIcon, 
@@ -19,6 +19,9 @@ import { motion } from 'framer-motion';
 const client = generateClient<Schema>();
 
 export default function ReviewQueue() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const [candidates, setCandidates] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [swipeState, setSwipeState] = useState<'reject' | 'accept' | null>(null);
@@ -325,9 +328,9 @@ export default function ReviewQueue() {
         </Box>
       )}
 
-      {/* Editor Drawer */}
+      {/* Adaptive Editor Drawer */}
       <Drawer
-        anchor="right"
+        anchor={isMobile ? 'bottom' : 'right'}
         open={isEditorOpen}
         onClose={() => {
           setIsEditorOpen(false);
@@ -336,18 +339,27 @@ export default function ReviewQueue() {
         slotProps={{
           paper: {
             sx: {
-              width: { xs: '100%', sm: 550 },
+              width: isMobile ? '100vw' : 550,
+              maxWidth: '100vw',
+              height: isMobile ? '90vh' : '100%',
+              maxHeight: isMobile ? '90vh' : '100vh',
+              borderTopLeftRadius: isMobile ? 16 : 0,
+              borderTopRightRadius: isMobile ? 16 : 0,
               background: '#151522',
-              borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
-              p: 4
+              borderLeft: isMobile ? 'none' : '1px solid rgba(255, 255, 255, 0.08)',
+              borderTop: isMobile ? '1px solid rgba(255, 255, 255, 0.15)' : 'none',
+              p: 0,
+              overflow: 'hidden',
+              boxSizing: 'border-box'
             }
           }
         }}
       >
         {selectedItem && (
-          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h5" sx={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            {/* Drawer Header */}
+            <Box sx={{ p: { xs: 2, sm: 3 }, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', flexShrink: 0 }}>
+              <Typography variant="h6" sx={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700 }}>
                 Edit & Publish
               </Typography>
               <IconButton onClick={() => {
@@ -358,107 +370,114 @@ export default function ReviewQueue() {
               </IconButton>
             </Box>
 
-            <TextField
-              label="Article Title"
-              fullWidth
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-              variant="outlined"
-            />
-
-            <TextField
-              label="Summary"
-              fullWidth
-              multiline
-              rows={4}
-              value={editSummary}
-              onChange={(e) => setEditSummary(e.target.value)}
-              variant="outlined"
-            />
-
-            <TextField
-              label="Why It Matters"
-              fullWidth
-              multiline
-              rows={3}
-              value={editWhyItMatters}
-              onChange={(e) => setEditWhyItMatters(e.target.value)}
-              variant="outlined"
-            />
-
-            {/* Score Sliders */}
-            <Box sx={{ px: 1 }}>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Factual Reliability: {editReliability} / 5
-              </Typography>
-              <Slider
-                value={editReliability}
-                min={1}
-                max={5}
-                step={1}
-                marks
-                onChange={(_, val) => setEditReliability(val as number)}
-                valueLabelDisplay="auto"
-              />
-            </Box>
-
-            <Box sx={{ px: 1 }}>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Strategic Significance: {editSignificance} / 5
-              </Typography>
-              <Slider
-                value={editSignificance}
-                min={1}
-                max={5}
-                step={1}
-                marks
-                onChange={(_, val) => setEditSignificance(val as number)}
-                valueLabelDisplay="auto"
-                color="secondary"
-              />
-            </Box>
-
-            {/* Entity Hints Alert */}
-            {selectedItem.aiAssessmentMetadata && (
-              <Alert severity="info" icon={<AiIcon />} sx={{ background: 'rgba(2, 136, 209, 0.08)', border: '1px solid rgba(2, 136, 209, 0.2)' }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
-                  AI SUGGESTED RELATIONSHIPS:
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                  Primary: {JSON.parse(selectedItem.aiAssessmentMetadata).suggestedPrimaryEntity || 'None'}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Related: {(JSON.parse(selectedItem.aiAssessmentMetadata).suggestedRelatedEntities || []).join(', ') || 'None'}
-                </Typography>
-              </Alert>
-            )}
-
-            <Box sx={{ flexGrow: 1 }} />
-
-            <Stack direction="row" spacing={2} sx={{ mt: 'auto' }}>
-              <Button
+            {/* Scrollable Form Body */}
+            <Box sx={{ p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto', overflowX: 'hidden', flexGrow: 1, boxSizing: 'border-box', width: '100%' }}>
+              <TextField
+                label="Article Title"
+                fullWidth
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
                 variant="outlined"
+                size={isMobile ? 'small' : 'medium'}
+              />
+
+              <TextField
+                label="Summary"
                 fullWidth
-                onClick={() => {
-                  setIsEditorOpen(false);
-                  setSwipeState(null);
-                }}
-                sx={{ borderRadius: 2, textTransform: 'none' }}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                color="success"
+                multiline
+                rows={isMobile ? 3 : 4}
+                value={editSummary}
+                onChange={(e) => setEditSummary(e.target.value)}
+                variant="outlined"
+                size={isMobile ? 'small' : 'medium'}
+              />
+
+              <TextField
+                label="Why It Matters"
                 fullWidth
-                onClick={handlePublish}
-                disabled={actionLoading}
-                startIcon={actionLoading ? <CircularProgress size={16} /> : <ApproveIcon />}
-                sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
-              >
-                Publish & Save
-              </Button>
-            </Stack>
+                multiline
+                rows={isMobile ? 2 : 3}
+                value={editWhyItMatters}
+                onChange={(e) => setEditWhyItMatters(e.target.value)}
+                variant="outlined"
+                size={isMobile ? 'small' : 'medium'}
+              />
+
+              {/* Score Sliders */}
+              <Box sx={{ px: 1 }}>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  Factual Reliability: {editReliability} / 5
+                </Typography>
+                <Slider
+                  value={editReliability}
+                  min={1}
+                  max={5}
+                  step={1}
+                  marks
+                  onChange={(_, val) => setEditReliability(val as number)}
+                  valueLabelDisplay="auto"
+                />
+              </Box>
+
+              <Box sx={{ px: 1 }}>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  Strategic Significance: {editSignificance} / 5
+                </Typography>
+                <Slider
+                  value={editSignificance}
+                  min={1}
+                  max={5}
+                  step={1}
+                  marks
+                  onChange={(_, val) => setEditSignificance(val as number)}
+                  valueLabelDisplay="auto"
+                  color="secondary"
+                />
+              </Box>
+
+              {/* Entity Hints Alert */}
+              {selectedItem.aiAssessmentMetadata && (
+                <Alert severity="info" icon={<AiIcon />} sx={{ background: 'rgba(2, 136, 209, 0.08)', border: '1px solid rgba(2, 136, 209, 0.2)' }}>
+                  <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
+                    AI SUGGESTED RELATIONSHIPS:
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                    Primary: {JSON.parse(selectedItem.aiAssessmentMetadata).suggestedPrimaryEntity || 'None'}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Related: {(JSON.parse(selectedItem.aiAssessmentMetadata).suggestedRelatedEntities || []).join(', ') || 'None'}
+                  </Typography>
+                </Alert>
+              )}
+            </Box>
+
+            {/* Sticky Action Footer */}
+            <Box sx={{ p: { xs: 2, sm: 3 }, borderTop: '1px solid rgba(255, 255, 255, 0.08)', background: '#151522', flexShrink: 0 }}>
+              <Stack direction="row" spacing={2}>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => {
+                    setIsEditorOpen(false);
+                    setSwipeState(null);
+                  }}
+                  sx={{ borderRadius: 2, textTransform: 'none' }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  color="success"
+                  fullWidth
+                  onClick={handlePublish}
+                  disabled={actionLoading}
+                  startIcon={actionLoading ? <CircularProgress size={16} /> : <ApproveIcon />}
+                  sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
+                >
+                  Publish & Save
+                </Button>
+              </Stack>
+            </Box>
           </Box>
         )}
       </Drawer>

@@ -87,7 +87,7 @@ function App() {
               </Drawer>
             )}
 
-            <Box sx={{ flexGrow: 1, pl: isMobile ? 0 : '260px', width: isMobile ? '100%' : 'calc(100% - 260px)' }}>
+            <Box sx={{ flexGrow: 1, pl: isMobile ? 0 : '260px', width: isMobile ? '100%' : 'calc(100% - 260px)', maxWidth: '100vw', overflowX: 'hidden' }}>
               {isMobile && (
                 <AppBar position="sticky" elevation={0} sx={{ background: 'rgba(15, 15, 25, 0.8)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
                   <Toolbar>
